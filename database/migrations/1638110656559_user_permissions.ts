@@ -19,6 +19,7 @@ export default class UserPermissions extends BaseSchema {
       .references('permission.id')
       .onDelete('CASCADE')
 
+      table.unique(['user_id', 'permission_id'])
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */
