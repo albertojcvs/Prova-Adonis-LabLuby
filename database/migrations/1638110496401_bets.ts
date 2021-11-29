@@ -7,11 +7,31 @@ export default class Bets extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
 
+      table
+      .integer('user_id')
+      .notNullable()
+      .unsigned()
+      .references('user.id')
+      .onDelete('CASCADE')
+
+      table
+      .integer('game_id')
+      .notNullable()
+      .unsigned()
+      .references('game.id')
+      .onDelete('CASCADE')
+
+      table
+      .string('numbers')
+      .notNullable()
+
+
+
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */
-      table.timestamp('created_at', { useTz: true })
-      table.timestamp('updated_at', { useTz: true })
+      table.datetime('created_at', { useTz: true })
+      table.datetime('updated_at', { useTz: true })
     })
   }
 
