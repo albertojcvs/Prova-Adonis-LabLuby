@@ -7,11 +7,13 @@ export default class Permissions extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
 
+      table.string('name')
+
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */
-      table.timestamp('created_at', { useTz: true })
-      table.timestamp('updated_at', { useTz: true })
+      table.datetime('created_at', { useTz: true })
+      table.datetime('updated_at', { useTz: true })
     })
   }
 

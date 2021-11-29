@@ -7,11 +7,19 @@ export default class Games extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
 
+      table.string('type').notNullable().unique()
+      table.string('description').notNullable()
+      table.integer('range').notNullable()
+      table.float('price').notNullable()
+      table.string('color').notNullable()
+      table.integer('max_number').notNullable()
+
+
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */
-      table.timestamp('created_at', { useTz: true })
-      table.timestamp('updated_at', { useTz: true })
+      table.datetime('created_at', { useTz: true })
+      table.datetime('updated_at', { useTz: true })
     })
   }
 
