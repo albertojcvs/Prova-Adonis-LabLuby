@@ -11,14 +11,14 @@ export default class Bets extends BaseSchema {
       .integer('user_id')
       .notNullable()
       .unsigned()
-      .references('user.id')
+      .references('users.id')
       .onDelete('CASCADE')
 
       table
       .integer('game_id')
       .notNullable()
       .unsigned()
-      .references('game.id')
+      .references('games.id')
       .onDelete('CASCADE')
 
       table

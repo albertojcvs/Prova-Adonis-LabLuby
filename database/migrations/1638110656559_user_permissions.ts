@@ -7,16 +7,16 @@ export default class UserPermissions extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
 
-      table.string('user_id')
+      table.integer('user_id')
       .notNullable()
       .unsigned()
-      .references('user.id')
+      .references('users.id')
       .onDelete('CASCADE')
 
-      table.string('permission_id')
+      table.integer('permission_id')
       .notNullable()
       .unsigned()
-      .references('permission.id')
+      .references('permissions.id')
       .onDelete('CASCADE')
 
       table.unique(['user_id', 'permission_id'])
@@ -24,7 +24,6 @@ export default class UserPermissions extends BaseSchema {
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */
       table.timestamp('created_at', { useTz: true })
-      table.timestamp('updated_at', { useTz: true })
     })
   }
 
