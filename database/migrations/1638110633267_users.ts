@@ -7,9 +7,9 @@ export default class Users extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
 
-    table.string('username')
-    table.string('email')
-    table.string('password')
+    table.string('username').notNullable().unique()
+    table.string('email').notNullable().unique()
+    table.string('password').notNullable()
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */
