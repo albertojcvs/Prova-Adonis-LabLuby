@@ -35,3 +35,8 @@ Route.group(() => {
   })
 
 }).prefix('/users')
+
+
+Route.group(() => {
+  Route.post('/0', 'LoginController.login')
+}).prefix('/login')
