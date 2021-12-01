@@ -1,5 +1,7 @@
 import { HttpContext } from '@adonisjs/http-server/build/standalone'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Mail from '@ioc:Adonis/Addons/Mail'
+
 import Permission from 'App/Models/Permission'
 import User from 'App/Models/User'
 import CreateUserValidator from 'App/Validators/CreateUserValidator'
@@ -36,11 +38,18 @@ export default class UsersController {
         email,
         password,
       })
-      console.log(user.password);
 
       const permission = await Permission.findByOrFail('name', permissionName)
 
       await user.related('permissions').attach([permission.id])
+
+      await Mail.sendLater((message) => {
+        message
+        .from('albertojcvs@gmail.com')
+        .to(email)
+        .subject('Welcome!!!')
+        .htmlView('emails/welcome',{username})
+      })
 
       return { message: 'User has been created!', user }
     } catch (err) {
