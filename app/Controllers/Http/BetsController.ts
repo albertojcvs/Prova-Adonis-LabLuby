@@ -60,7 +60,7 @@ export default class BetsController {
 
       return bet
     } catch (err) {
-      return err
+      return 'There is no bet with this id!'
     }
   }
 

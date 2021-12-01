@@ -39,7 +39,7 @@ Route.group(() => {
   Route.post('/', 'BetsController.store')
   Route.get('/', 'BetsController.index')
   Route.get('/:id', 'BetsController.show')
-  Route.delete('/:id', 'BetsControllers.destroy')
+  Route.delete('/:id', 'BetsController.destroy')
 }).prefix('/bets')
 
 Route.group(() => {
