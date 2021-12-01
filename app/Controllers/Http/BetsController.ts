@@ -1,5 +1,6 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Bet from 'App/Models/Bet'
+import Game from 'App/Models/Game'
 import CreateBetValidator from 'App/Validators/CreateBetValidator'
 
 export default class BetsController {
@@ -10,8 +11,21 @@ export default class BetsController {
   public async store({ request, response }: HttpContextContract) {
     try {
       const { bets } = await request.validate(CreateBetValidator)
+
       await bets.forEach(async (bet) => {
+        const game = await Game.findOrFail(bet.game_id)
+
+        if(bet.numbers.length > game.max_number){
+          response.status(409).send('Some of the bets have more numbers than the  game max numbers!')
+        }
+        const betHasNumbersGreaterThanGameRange = bet.numbers.some((number) => number > game.range)
+        if(betHasNumbersGreaterThanGameRange){
+          response.status(409).send({message:'Some of the bets have a numbers greather than game range!'})
+        }
+
+
         const betNumbersInString = bet.numbers.join(', ')
+
         const betAlreadyExists = await Bet.query()
           .select('*')
           .where('user_id', `${bet.user_id}`)
@@ -20,9 +34,10 @@ export default class BetsController {
           .first()
 
         if (betAlreadyExists) {
-          return response.status(409).send({ message: 'Some of the bets already exits! ', bet })
+          response.status(409).send({ message: 'Some of the bets already exits! ', bet })
         }
       })
+
       const newBets = await Bet.createMany(
         bets.map((bet) => {
           return {
@@ -34,13 +49,32 @@ export default class BetsController {
       return { message: 'Bets have been created!', bets: newBets }
     } catch (err) {
       return err
-      }
     }
+  }
 
+  public async show({ params }: HttpContextContract) {
+    try {
+      const { id } = params
 
-  public async show({}: HttpContextContract) {}
+      const bet = await Bet.findOrFail(id)
 
-  public async update({}: HttpContextContract) {}
+      return bet
+    } catch (err) {
+      return err
+    }
+  }
 
-  public async destroy({}: HttpContextContract) {}
+  public async destroy({ params }: HttpContextContract) {
+    try {
+      const { id } = params
+
+      const bet = await Bet.findOrFail(id)
+
+      await bet.delete()
+
+      return 'Bet has been deleted!'
+    } catch (err) {
+      return err
+    }
+  }
 }
