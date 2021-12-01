@@ -32,7 +32,7 @@ Route.group(() => {
     Route.get('/:id', 'UsersController.show')
     Route.put('/:id', 'UsersController.update')
     Route.delete('/:id', 'UsersController.destroy')
-  })
+  }).middleware('auth:api')
 }).prefix('/users')
 
 Route.group(() => {
@@ -41,14 +41,18 @@ Route.group(() => {
   Route.post('/', 'GamesController.store')
   Route.put('/:id', 'GamesController.update')
   Route.delete('/:id', 'GamesController.destroy')
-}).prefix('/games')
+})
+  .prefix('/games')
+  .middleware('auth:api')
 
 Route.group(() => {
   Route.post('/', 'BetsController.store')
   Route.get('/', 'BetsController.index')
   Route.get('/:id', 'BetsController.show')
   Route.delete('/:id', 'BetsController.destroy')
-}).prefix('/bets')
+})
+  .prefix('/bets')
+  .middleware('auth:api')
 
 Route.group(() => {
   Route.post('/', 'LoginController.login')
