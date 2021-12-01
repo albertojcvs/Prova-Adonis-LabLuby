@@ -33,9 +33,11 @@ Route.group(() => {
     Route.put('/:id', 'UsersController.update')
     Route.delete('/:id', 'UsersController.destroy')
   })
-
 }).prefix('/users')
 
+Route.group(() => {
+  Route.post('/', 'BetsController.store')
+}).prefix('/bets')
 
 Route.group(() => {
   Route.post('/', 'LoginController.login')

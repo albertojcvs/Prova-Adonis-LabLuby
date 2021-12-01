@@ -30,8 +30,8 @@ export default class Bets extends BaseSchema {
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */
-      table.datetime('created_at', { useTz: true })
-      table.datetime('updated_at', { useTz: true })
+      table.dateTime('created_at', { useTz: true })
+      table.dateTime('updated_at', { useTz: true })
     })
   }
 
