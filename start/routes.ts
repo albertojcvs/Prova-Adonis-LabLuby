@@ -36,6 +36,14 @@ Route.group(() => {
 }).prefix('/users')
 
 Route.group(() => {
+  Route.get('/', 'GamesController.index')
+  Route.get('/:id', 'GamesController.show')
+  Route.post('/', 'GamesController.store')
+  Route.put('/:id', 'GamesController.update')
+  Route.delete('/:id', 'GamesController.destroy')
+}).prefix('/games')
+
+Route.group(() => {
   Route.post('/', 'BetsController.store')
   Route.get('/', 'BetsController.index')
   Route.get('/:id', 'BetsController.show')
