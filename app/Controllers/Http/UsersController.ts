@@ -17,6 +17,7 @@ export default class UsersController {
       await user.load('bets')
       return user
     } catch (err) {
+      console.log(err)
       return err
     }
   }
@@ -35,6 +36,7 @@ export default class UsersController {
         email,
         password,
       })
+      console.log(user.password);
 
       const permission = await Permission.findByOrFail('name', permissionName)
 
@@ -48,7 +50,7 @@ export default class UsersController {
 
   async update({ params, request }: HttpContext) {
     try {
-      const { id } = params.id
+      const { id } = params
 
 
       const {username:newUsername} =  await  request.validate(UpdateUserValidator)
@@ -64,7 +66,7 @@ export default class UsersController {
 
   async destroy({ params }: HttpContext) {
     try {
-      const { id } = params.id
+      const { id } = params
 
       const user = await User.findOrFail(id)
 

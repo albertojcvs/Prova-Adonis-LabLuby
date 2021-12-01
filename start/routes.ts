@@ -31,12 +31,12 @@ Route.group(() => {
     Route.get('/', 'UsersController.index')
     Route.get('/:id', 'UsersController.show')
     Route.put('/:id', 'UsersController.update')
-    Route.delete('/:id', 'UserController.destroy')
+    Route.delete('/:id', 'UsersController.destroy')
   })
 
 }).prefix('/users')
 
 
 Route.group(() => {
-  Route.post('/0', 'LoginController.login')
+  Route.post('/', 'LoginController.login')
 }).prefix('/login')

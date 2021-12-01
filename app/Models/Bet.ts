@@ -14,6 +14,8 @@ export default class Bet extends BaseModel {
   public game: BelongsTo<typeof Game>
 
   @column()
+  public user_id:number
+  @column()
   public numbers:string
 
   @column.dateTime({ autoCreate: true })
