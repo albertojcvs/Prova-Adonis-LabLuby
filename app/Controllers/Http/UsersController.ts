@@ -1,7 +1,7 @@
 import { HttpContext } from '@adonisjs/http-server/build/standalone'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Mail from '@ioc:Adonis/Addons/Mail'
-
+import { DateTime } from 'luxon'
 import Permission from 'App/Models/Permission'
 import User from 'App/Models/User'
 import CreateUserValidator from 'App/Validators/CreateUserValidator'
@@ -9,14 +9,31 @@ import UpdateUserValidator from 'App/Validators/UpdateUserValidator'
 
 export default class UsersController {
   async index() {
-    return await User.all()
+    return await User.query().preload('bets', (betsQuery) => {
+
+      betsQuery
+        .where('created_at', '<=', DateTime.now().toSQL())
+        .where(
+          'created_at',
+          '>',
+          DateTime.now().minus({ days: 30 }).startOf('day').toSQL()
+        )
+    })
   }
 
   async show({ params }: HttpContextContract) {
     try {
       const { id } = params
       const user = await User.findOrFail(id)
-      await user.load('bets')
+      await user.load('bets', (betsQuery) => {
+        betsQuery
+        .where('created_at', '<=', DateTime.now().toSQL())
+        .where(
+          'created_at',
+          '>',
+          DateTime.now().minus({ days: 30 }).startOf('day').toSQL()
+        )
+      })
       return user
     } catch (err) {
       console.log(err)
@@ -45,10 +62,10 @@ export default class UsersController {
 
       await Mail.sendLater((message) => {
         message
-        .from('albertojcvs@gmail.com')
-        .to(email)
-        .subject('Welcome!!!')
-        .htmlView('emails/welcome',{username})
+          .from('albertojcvs@gmail.com')
+          .to(email)
+          .subject('Welcome!!!')
+          .htmlView('emails/welcome', { username })
       })
 
       return { message: 'User has been created!', user }
@@ -61,8 +78,7 @@ export default class UsersController {
     try {
       const { id } = params
 
-
-      const {username:newUsername} =  await  request.validate(UpdateUserValidator)
+      const { username: newUsername } = await request.validate(UpdateUserValidator)
       const user = await User.findOrFail(id)
 
       user.username = newUsername
@@ -79,10 +95,7 @@ export default class UsersController {
 
       const user = await User.findOrFail(id)
 
-
       await user.delete()
-
-
     } catch (err) {}
   }
 }
