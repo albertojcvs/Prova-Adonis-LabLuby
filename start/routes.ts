@@ -38,9 +38,11 @@ Route.group(() => {
 Route.group(() => {
   Route.get('/', 'GamesController.index')
   Route.get('/:id', 'GamesController.show')
-  Route.post('/', 'GamesController.store')
-  Route.put('/:id', 'GamesController.update')
-  Route.delete('/:id', 'GamesController.destroy')
+  Route.group(() => {
+    Route.post('/', 'GamesController.store')
+    Route.put('/:id', 'GamesController.update')
+    Route.delete('/:id', 'GamesController.destroy')
+  }).middleware('isAdmin')
 })
   .prefix('/games')
   .middleware('auth:api')
@@ -61,9 +63,12 @@ Route.group(() => {
 Route.group(() => {
   Route.get('/', 'PermissionsController.index')
   Route.get('/:id', 'PermissionsController.show')
-  Route.post('/', 'PermissionsController.store')
-  Route.put('/:id', 'PermissionsController.update')
-  Route.delete('/:id', 'PermissionsController.destroy')
+  Route.group(() => {
+    Route.post('/', 'PermissionsController.store')
+    Route.put('/:id', 'PermissionsController.update')
+    Route.delete('/:id', 'PermissionsController.destroy')
+  }).middleware('isAdmin')
 })
   .prefix('/permissions')
   .middleware('auth:api')
+  .middleware('isAdmin')
