@@ -57,3 +57,13 @@ Route.group(() => {
 Route.group(() => {
   Route.post('/', 'LoginController.login')
 }).prefix('/login')
+
+Route.group(() => {
+  Route.get('/', 'PermissionsController.index')
+  Route.get('/:id', 'PermissionsController.show')
+  Route.post('/', 'PermissionsController.store')
+  Route.put('/:id', 'PermissionsController.update')
+  Route.delete('/:id', 'PermissionsController.destroy')
+})
+  .prefix('/permissions')
+  .middleware('auth:api')

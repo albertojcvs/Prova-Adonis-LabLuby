@@ -30,7 +30,7 @@ export default class UsersController {
         .where('created_at', '<=', DateTime.now().toSQL())
         .where(
           'created_at',
-          '>',
+          '>=',
           DateTime.now().minus({ days: 30 }).startOf('day').toSQL()
         )
       })
