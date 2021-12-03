@@ -38,16 +38,19 @@ export default class User extends BaseModel {
   })
   public permissions: ManyToMany<typeof Permission>
 
+  @column()
+  public token: string
+  @column.dateTime()
+  public token_created_at: DateTime
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
 
-
   @beforeSave()
-  public static async hashPassword(user:User){
-    if(user.$dirty.password){
+  public static async hashPassword(user: User) {
+    if (user.$dirty.password) {
       user.password = await Hash.make(user.password)
     }
   }
