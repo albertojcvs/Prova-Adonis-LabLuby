@@ -8,4 +8,8 @@ export default class LoginCotroller {
     const token = await auth.use('api').attempt(email, password)
     return token
   }
+  async logout({auth}:HttpContextContract){
+    await  auth.use('api').revoke()
+    return 'User logout'
+  }
 }

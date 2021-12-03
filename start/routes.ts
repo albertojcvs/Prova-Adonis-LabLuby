@@ -34,7 +34,7 @@ Route.group(() => {
 
 Route.group(() => {
   Route.post('/', 'LoginController.login')
-  Route.delete('/', 'LoginController.logout')
+  Route.delete('/', 'LoginController.logout').middleware('auth:api')
 }).prefix('/login')
 
 Route.group(() => {
