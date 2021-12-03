@@ -26,6 +26,10 @@ export default class ExceptionHandler extends HttpExceptionHandler {
       return ctx.response.status(409).send('There is no user with this data!')
     }
 
+    if(error.code === 'E_AUTHORIZATION_FAILURE'){
+      return ctx.response.send('It is not possible change that not yours data')
+    }
+
     return error.message
   }
 }

@@ -6,7 +6,8 @@
     "@adonisjs/repl/build/commands",
     "@adonisjs/lucid/build/commands",
     "@adonisjs/mail/build/commands",
-    "adonis5-scheduler/build/commands"
+    "adonis5-scheduler/build/commands",
+    "@adonisjs/bouncer/build/commands"
   ],
   "exceptionHandlerNamespace": "App/Exceptions/Handler",
   "aliases": {
@@ -17,7 +18,8 @@
   },
   "preloads": [
     "./start/routes",
-    "./start/kernel"
+    "./start/kernel",
+    "./start/bouncer"
   ],
   "providers": [
     "./providers/AppProvider",
@@ -26,7 +28,8 @@
     "@adonisjs/auth",
     "@adonisjs/mail",
     "@adonisjs/view",
-    "adonis5-scheduler"
+    "adonis5-scheduler",
+    "@adonisjs/bouncer"
   ],
   "aceProviders": [
     "@adonisjs/repl"

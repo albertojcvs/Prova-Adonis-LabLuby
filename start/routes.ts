@@ -41,7 +41,7 @@ Route.group(() => {
   Route.get('/', 'PermissionsController.index')
   Route.get('/:id', 'PermissionsController.show')
   Route.group(() => {
-    Route.post('/', 'PermissionController.store')
+    Route.post('/', 'PermissionsController.store')
     Route.put('/:id', 'PermissionsController.update')
     Route.delete('/:id', 'PermissionsController.destroy')
   }).middleware('isAdmin')

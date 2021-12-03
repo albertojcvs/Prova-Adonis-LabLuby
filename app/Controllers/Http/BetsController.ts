@@ -79,10 +79,10 @@ export default class BetsController {
     return bet
   }
 
-  public async destroy({ params }: HttpContextContract) {
+  public async destroy({ params, bouncer }: HttpContextContract) {
     const { id } = params
-
     const bet = await Bet.findOrFail(id)
+    await bouncer.authorize('deleteBet', bet)
 
     await bet.delete()
   }
