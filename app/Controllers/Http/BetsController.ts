@@ -12,92 +12,78 @@ export default class BetsController {
   }
 
   public async store({ request, response }: HttpContextContract) {
-    try {
-      const { bets } = await request.validate(CreateBetValidator)
+    const { bets } = await request.validate(CreateBetValidator)
 
-      const betsToEmail: { numbers: number[]; game_name: string }[] = []
+    const betsToEmail: { numbers: number[]; game_name: string }[] = []
 
-      for (let bet of bets) {
-        const game = await Game.findOrFail(bet.game_id)
+    for (let bet of bets) {
+      const game = await Game.findOrFail(bet.game_id)
 
-        betsToEmail.push({ numbers: bet.numbers, game_name: game.type })
+      betsToEmail.push({ numbers: bet.numbers, game_name: game.type })
 
-        if (bet.numbers.length > game.max_number) {
-          return response
-            .status(409)
-            .send('Some of the bets have more numbers than the  game max numbers!')
-        }
-        const betHasNumbersGreaterThanGameRange = bet.numbers.some((number) => number > game.range)
-        if (betHasNumbersGreaterThanGameRange) {
-          return response
-            .status(409)
-            .send({ message: 'Some of the bets have a numbers greather than game range!' })
-        }
-
-        const betNumbersInString = bet.numbers.join(', ')
-
-        const betAlreadyExists = await Bet.query()
-          .select('*')
-          .where('user_id', `${bet.user_id}`)
-          .andWhere('game_id', `${bet.game_id}`)
-          .andWhere('numbers', betNumbersInString)
-          .first()
-
-        if (betAlreadyExists) {
-          return response.status(409).send({ message: 'Some of the bets already exits! ', bet })
-        }
+      if (bet.numbers.length > game.max_number) {
+        return response
+          .status(409)
+          .send('Some of the bets have more numbers than the  game max numbers!')
+      }
+      const betHasNumbersGreaterThanGameRange = bet.numbers.some((number) => number > game.range)
+      if (betHasNumbersGreaterThanGameRange) {
+        return response
+          .status(409)
+          .send({ message: 'Some of the bets have a numbers greather than game range!' })
       }
 
-      const newBets = await Bet.createMany(
-        bets.map((bet) => {
-          return {
-            ...bet,
-            numbers: bet.numbers.join(', '),
-          }
-        })
-      )
-      const user_id = bets[0].user_id
+      const betNumbersInString = bet.numbers.join(', ')
 
-      const user = await User.findOrFail(user_id)
+      const betAlreadyExists = await Bet.query()
+        .select('*')
+        .where('user_id', `${bet.user_id}`)
+        .andWhere('game_id', `${bet.game_id}`)
+        .andWhere('numbers', betNumbersInString)
+        .first()
 
-      console.log(betsToEmail)
-
-      await Mail.sendLater((message) => {
-        message
-          .from('albertojcvs@gmail.com')
-          .to(user.email)
-          .subject('Your new bets!')
-          .htmlView('emails/new_bets', { bets: betsToEmail, username: user.username })
-      })
-      return { message: 'Bets have been created!', bets: newBets }
-    } catch (err) {
-      return err
+      if (betAlreadyExists) {
+        return response.status(409).send({ message: 'Some of the bets already exits! ', bet })
+      }
     }
+
+    const newBets = await Bet.createMany(
+      bets.map((bet) => {
+        return {
+          ...bet,
+          numbers: bet.numbers.join(', '),
+        }
+      })
+    )
+    const user_id = bets[0].user_id
+
+    const user = await User.findOrFail(user_id)
+
+    console.log(betsToEmail)
+
+    await Mail.sendLater((message) => {
+      message
+        .from('albertojcvs@gmail.com')
+        .to(user.email)
+        .subject('Your new bets!')
+        .htmlView('emails/new_bets', { bets: betsToEmail, username: user.username })
+    })
+    return { message: 'Bets have been created!', bets: newBets }
   }
 
   public async show({ params }: HttpContextContract) {
-    try {
-      const { id } = params
+    const { id } = params
 
-      const bet = await Bet.findOrFail(id)
+    const bet = await Bet.findOrFail(id)
 
-      return bet
-    } catch (err) {
-      return 'There is no bet with this id!'
-    }
+    return bet
   }
 
   public async destroy({ params }: HttpContextContract) {
-    try {
-      const { id } = params
+    const { id } = params
 
-      const bet = await Bet.findOrFail(id)
+    const bet = await Bet.findOrFail(id)
 
-      await bet.delete()
-
-      return 'Bet has been deleted!'
-    } catch (err) {
-      return err
-    }
+    await bet.delete()
   }
 }

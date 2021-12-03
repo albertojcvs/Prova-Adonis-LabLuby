@@ -16,37 +16,25 @@ export default class GamesController {
   }
 
   public async show({ params }: HttpContextContract) {
-    try {
-      const { id } = params
-      const game = await Game.findOrFail(id)
-      return game
-    } catch (err) {
-      return 'There is no game with this id!'
-    }
+    const { id } = params
+    const game = await Game.findOrFail(id)
+    return game
   }
 
   public async update({ params, request }: HttpContextContract) {
-    try {
-      const { id } = params
-      const game = await Game.findOrFail(id)
+    const { id } = params
+    const game = await Game.findOrFail(id)
 
-      const data = await request.validate(SaveGameValidator)
+    const data = await request.validate(SaveGameValidator)
 
-      Object.assign(game, data)
+    Object.assign(game, data)
 
-      await game.save()
-    } catch (err) {
-      return 'There is no game with this id!'
-    }
+    await game.save()
   }
 
   public async destroy({ params }: HttpContextContract) {
-    try {
-      const { id } = params
-      const game = await Game.findOrFail(id)
-      await game.delete()
-    } catch (err) {
-      return 'There is no game with this id!'
-    }
+    const { id } = params
+    const game = await Game.findOrFail(id)
+    await game.delete()
   }
 }

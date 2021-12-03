@@ -16,18 +16,14 @@ export default class PermissionsController {
   }
 
   public async show({ params }: HttpContextContract) {
-    try {
+
       const { id } = params
       const permission = await Permission.findOrFail(id)
 
       return permission
-    } catch (err) {
-      return 'There is no permission with this id!'
-    }
   }
 
   public async update({ params, request }: HttpContextContract) {
-    try {
       const { id } = params
       const data = await request.validate(SavePermissionValidator)
 
@@ -35,19 +31,13 @@ export default class PermissionsController {
       Object.assign(permission, data)
 
       await permission.save()
-    } catch (err) {
-      return 'There is no permission with this id!'
-    }
   }
 
   public async destroy({ params }: HttpContextContract) {
-    try {
+
       const { id } = params
       const permission = await Permission.findOrFail(id)
 
       await permission.delete()
-    } catch (err) {
-      return 'There is no permission with this id!'
-    }
   }
 }
