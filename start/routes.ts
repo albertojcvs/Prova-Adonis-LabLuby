@@ -1,9 +1,5 @@
 import Route from '@ioc:Adonis/Core/Route'
 
-Route.get('/', async () => {
-  return { hello: 'world' }
-})
-
 Route.group(() => {
   Route.post('/', 'UsersController.store')
 
@@ -41,18 +37,19 @@ Route.group(() => {
   Route.delete('/', 'LoginController.logout')
 }).prefix('/login')
 
+
+
 Route.group(() => {
   Route.get('/', 'PermissionsController.index')
   Route.get('/:id', 'PermissionsController.show')
   Route.group(() => {
-    Route.post('/', 'PermissionsController.store')
+    Route.post('/', 'PermissionController.store')
     Route.put('/:id', 'PermissionsController.update')
     Route.delete('/:id', 'PermissionsController.destroy')
   }).middleware('isAdmin')
 })
   .prefix('/permissions')
   .middleware('auth:api')
-  .middleware('isAdmin')
 
 Route.group(() => {
   Route.post('/', 'ResetPasswordController.store')

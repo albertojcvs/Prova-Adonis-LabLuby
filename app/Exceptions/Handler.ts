@@ -12,17 +12,18 @@ export default class ExceptionHandler extends HttpExceptionHandler {
     if (error.code === 'E_VALIDATION_FAILURE') {
       return ctx.response
         .status(422)
-        .send(`Error when try to validate the attributes in the route:${rota} ->` + error.messages)
-    }
+        .send({message:`Error when try to validate the attributes in the route:${rota}`, errors:error.messages.errors})
+      }
+
 
     if (error.code === 'E_ROW_NOT_FOUND') {
       return ctx.response
         .status(409)
-        .send(`Error when try to find a ${rota.substr(0, rota.length - 1)} in database`)
+        .send(`Error when try to find a ${rota.substr(0, rota.length - 1)} with this id in database`)
     }
 
     if (error.code === 'E_INVALID_AUTH_UID') {
-      return ctx.response.status(409).send('Error when try to authenticate a user')
+      return ctx.response.status(409).send('There is no user with this data!')
     }
 
     return error.message
