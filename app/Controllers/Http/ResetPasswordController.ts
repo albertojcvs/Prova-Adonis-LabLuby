@@ -23,30 +23,41 @@ export default class ResetPasswordController {
         .from('albertojcvs@gmail.com')
         .to(user.email)
         .subject('Reset Password')
-        .htmlView('emails/reset_password', { username: user.username, url })
+        .htmlView('emails/reset_password', {
+          username: user.username,
+          url: `${url}/?token="${user.token}`,
+        })
     })
   }
   public async resetPassword({ request }: HttpContextContract) {
     const { password, token } = await request.validate(ResetPasswordValidator)
+
     const user = await User.findByOrFail('token', token)
+
     const periodInSeconds = 1 * 60 * 60 // 1 hour:  1 hour *  60 minutes * 60 seconds
-    const isTokenExpired =
-      DateTime.now().toSeconds() - user.token_created_at.toSeconds() > periodInSeconds
 
-    if (isTokenExpired) {
-      return 'This token has expired'
+    if (user.token && user.token_created_at) {
+      const isTokenExpired =
+        DateTime.now().toSeconds() - user.token_created_at.toSeconds() > periodInSeconds
+
+      if (isTokenExpired) {
+        return 'This token has expired'
+      }
+
+      user.password = password
+      user.token = null
+      user.token_created_at = null
+      await user.save()
+
+      await Mail.sendLater((message) => {
+        message
+          .from('albertojcvs@gmail.com')
+          .to(user.email)
+          .subject('Your password was reseted')
+          .htmlView('emails/password_reseted', { username: user.email })
+      })
+    } else {
+      return 'The user does not have a token!'
     }
-
-    user.password = password
-
-    await user.save()
-
-    await Mail.sendLater((message) => {
-      message
-        .from('albertojcvs@gmail.com')
-        .to(user.email)
-        .subject('Your password was reseted')
-        .htmlView('/emails/password_reseted', { username: user.email })
-    })
   }
 }

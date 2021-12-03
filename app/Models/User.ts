@@ -39,9 +39,9 @@ export default class User extends BaseModel {
   public permissions: ManyToMany<typeof Permission>
 
   @column()
-  public token: string
+  public token: string | null
   @column.dateTime()
-  public token_created_at: DateTime
+  public token_created_at: DateTime | null
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 
