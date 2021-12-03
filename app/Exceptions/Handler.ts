@@ -12,7 +12,7 @@ export default class ExceptionHandler extends HttpExceptionHandler {
     if (error.code === 'E_VALIDATION_FAILURE') {
       return ctx.response
         .status(422)
-        .send(`Error when try to validate the ${rota.substr(0, rota.length - 1)}` + error.messages)
+        .send(`Error when try to validate the ${rota.substr(0, rota.length - 1)} ->` + error.messages)
     }
 
     if (error.code === 'E_ROW_NOT_FOUND') {
@@ -24,5 +24,7 @@ export default class ExceptionHandler extends HttpExceptionHandler {
     if (error.code === 'E_INVALID_AUTH_UID') {
       return ctx.response.status(409).send('Error when try to authenticate a user')
     }
+
+    return error.message
   }
 }
