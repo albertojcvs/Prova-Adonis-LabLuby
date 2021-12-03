@@ -37,8 +37,6 @@ Route.group(() => {
   Route.delete('/', 'LoginController.logout')
 }).prefix('/login')
 
-
-
 Route.group(() => {
   Route.get('/', 'PermissionsController.index')
   Route.get('/:id', 'PermissionsController.show')
@@ -57,9 +55,9 @@ Route.group(() => {
 }).prefix('/resetPassword')
 
 Route.group(() => {
-  Route.put('/', 'PromoteUserController.promote')
+  Route.post('/', 'PromoteUserController.promote')
   Route.delete('/', 'PromoteUserController.removePromotion')
 })
-  .prefix('/promoteUser')
+  .prefix('/promote')
   .middleware('auth:api')
   .middleware('isAdmin')

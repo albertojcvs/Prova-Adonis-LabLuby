@@ -13,7 +13,7 @@ export default class UsersController {
       betsQuery
         .where('created_at', '<=', DateTime.now().toSQL())
         .where('created_at', '>', DateTime.now().minus({ days: 30 }).startOf('day').toSQL())
-    })
+    }).preload('permissions')
   }
 
   async show({ params }: HttpContextContract) {
@@ -24,6 +24,7 @@ export default class UsersController {
           .where('created_at', '<=', DateTime.now().toSQL())
           .where('created_at', '>=', DateTime.now().minus({ days: 30 }).startOf('day').toSQL())
       })
+      await user.load('permissions')
       return user
   }
 
