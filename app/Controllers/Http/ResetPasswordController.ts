@@ -40,6 +40,7 @@ export default class ResetPasswordController {
     user.password = password
 
     await user.save()
+
     await Mail.sendLater((message) => {
       message
         .from('albertojcvs@gmail.com')
