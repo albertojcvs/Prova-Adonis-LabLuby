@@ -41,13 +41,6 @@ export default class CreateUserValidator {
       }),
     ]),
     password: schema.string({ trim: true }, [rules.confirmed(), rules.required()]),
-    permission: schema.string({ trim: true }, [
-      rules.required(),
-      rules.exists({
-        table: 'permissions',
-        column: 'name',
-      }),
-    ]),
   })
 
   public messages = {

@@ -31,8 +31,7 @@ export default class UsersController {
     const {
       username,
       email,
-      password,
-      permission: permissionName,
+      password
     } = await request.validate(CreateUserValidator)
 
     const user = await User.create({
@@ -41,7 +40,7 @@ export default class UsersController {
       password,
     })
 
-    const permission = await Permission.findByOrFail('name', permissionName)
+    const permission = await Permission.findByOrFail('name', 'player')
 
     await user.related('permissions').attach([permission.id])
 
