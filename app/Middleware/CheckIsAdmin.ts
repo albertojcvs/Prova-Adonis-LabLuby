@@ -12,7 +12,7 @@ export default class CheckIsAdmin {
       const isAdmin = user.permissions.some((permission) => permission.name === 'admin')
 
       if (isAdmin) await next()
-      else response.send('Only admins can use this route!')
+      else response.status(403).send({error:{message:'Only admins can use this route!'}})
     }
   }
 }

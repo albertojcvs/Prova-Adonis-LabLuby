@@ -11,14 +11,14 @@ export default class PromoteUserController {
     const user = await User.findOrFail(user_id)
 
     await user.related('permissions').attach([permission.id])
-    return 'User was promoted to ' + permission.name
+    return { success: { message: 'User was promoted to ' + permission.name } }
   }
 
   public async removePromotion({ request }: HttpContextContract) {
     const { user_id, permission_name } = await request.validate(PromoteUserValidator)
 
     if (permission_name === 'player') {
-      return 'It is not possible remove player permission.'
+      return { error: { message: 'It is not possible remove player permission.' } }
     }
 
     const permission = await Permission.findByOrFail('name', permission_name)
@@ -31,9 +31,13 @@ export default class PromoteUserController {
     )
     if (userHasThePermission) {
       await user.related('permissions').detach([permission.id])
-      return 'The permisision was removed!'
+      return { success: { message: 'The permisision was removed!' } }
     } else {
-      return 'Can not remove this permission because user does not have it!'
+      return {
+        errro: {
+          message: 'Can not remove this permission because user does not have it!',
+        },
+      }
     }
   }
 }

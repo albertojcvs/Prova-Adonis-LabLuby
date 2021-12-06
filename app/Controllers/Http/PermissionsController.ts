@@ -11,9 +11,9 @@ export default class PermissionsController {
 
       const data = await request.validate(SavePermissionValidator)
 
-      await Permission.create(data)
+     const permission =  await Permission.create(data)
 
-      return 'Permission has been created!'
+      return permission
 
   }
 
@@ -32,6 +32,7 @@ export default class PermissionsController {
     Object.assign(permission, data)
 
     await permission.save()
+    return permission
   }
 
   public async destroy({ params }: HttpContextContract) {
@@ -39,5 +40,6 @@ export default class PermissionsController {
     const permission = await Permission.findOrFail(id)
 
     await permission.delete()
+    return {success:{message:'Permission has been deleted'}}
   }
 }

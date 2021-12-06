@@ -30,11 +30,15 @@ export default class GamesController {
     Object.assign(game, data)
 
     await game.save()
+
+    return game
   }
 
   public async destroy({ params }: HttpContextContract) {
     const { id } = params
     const game = await Game.findOrFail(id)
     await game.delete()
+
+    return { sucess: { message: 'Game has been deleted!' } }
   }
 }

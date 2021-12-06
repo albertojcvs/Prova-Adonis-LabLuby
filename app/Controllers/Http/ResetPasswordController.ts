@@ -29,7 +29,7 @@ export default class ResetPasswordController {
         })
     })
   }
-  public async resetPassword({ request }: HttpContextContract) {
+  public async resetPassword({ request, response}: HttpContextContract) {
     const { password, token } = await request.validate(ResetPasswordValidator)
 
     const user = await User.findByOrFail('token', token)
@@ -41,7 +41,7 @@ export default class ResetPasswordController {
         DateTime.now().toSeconds() - user.token_created_at.toSeconds() > periodInSeconds
 
       if (isTokenExpired) {
-        return 'This token has expired'
+        return response.status(401).send({error:{message:'This token has expired'}})
       }
 
       user.password = password
@@ -57,7 +57,7 @@ export default class ResetPasswordController {
           .htmlView('emails/password_reseted', { username: user.username })
       })
     } else {
-      return 'The user does not have a token!'
+      return response.status(409).send({error:{message:'The user does not have a token!'}})
     }
   }
 }

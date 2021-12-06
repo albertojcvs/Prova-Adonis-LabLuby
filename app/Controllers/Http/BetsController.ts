@@ -24,13 +24,13 @@ export default class BetsController {
       if (bet.numbers.length > game.max_number) {
         return response
           .status(409)
-          .send('Some of the bets have more numbers than the  game max numbers!')
+          .send({error:{message:'Some of the bets have more numbers than the  game max numbers!'}})
       }
       const betHasNumbersGreaterThanGameRange = bet.numbers.some((number) => number > game.range)
       if (betHasNumbersGreaterThanGameRange) {
         return response
           .status(409)
-          .send({ message: 'Some of the bets have a numbers greather than game range!' })
+          .send({error:{ message: 'Some of the bets have a numbers greather than game range!' }})
       }
 
       const betNumbersInString = bet.numbers.join(', ')
@@ -43,7 +43,7 @@ export default class BetsController {
         .first()
 
       if (betAlreadyExists) {
-        return response.status(409).send({ message: 'Some of the bets already exits! ', bet })
+        return response.status(409).send({error:{ message: 'Some of the bets already exits! ', bet }})
       }
     }
 
@@ -59,8 +59,6 @@ export default class BetsController {
 
     const user = await User.findOrFail(user_id)
 
-    console.log(betsToEmail)
-
     await Mail.sendLater((message) => {
       message
         .from('albertojcvs@gmail.com')
@@ -68,7 +66,7 @@ export default class BetsController {
         .subject('Your new bets!')
         .htmlView('emails/new_bets', { bets: betsToEmail, username: user.username })
     })
-    return { message: 'Bets have been created!', bets: newBets }
+    return {success:{ message: 'Bets have been created!', bets: newBets }}
   }
 
   public async show({ params }: HttpContextContract) {
@@ -85,5 +83,6 @@ export default class BetsController {
     await bouncer.authorize('deleteBet', bet)
 
     await bet.delete()
+    return {success:{message: 'User has been deleted!'}}
   }
 }

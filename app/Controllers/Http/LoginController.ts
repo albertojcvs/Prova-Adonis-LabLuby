@@ -10,6 +10,6 @@ export default class LoginCotroller {
   }
   async logout({auth}:HttpContextContract){
     await  auth.use('api').revoke()
-    return 'User logout'
+    return {success:{message:'User logout'}}
   }
 }

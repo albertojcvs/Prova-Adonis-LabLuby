@@ -12,12 +12,12 @@ import UpdateUserValidator from 'App/Validators/UpdateUserValidator'
 export default class UsersController {
   async index() {
     return await User.query()
+    .select('id','username','email','created_at','updated_at')
       .preload('bets', (betsQuery) => {
         betsQuery
           .where('created_at', '<=', DateTime.now().toSQL())
           .where('created_at', '>', DateTime.now().minus({ days: 30 }).startOf('day').toSQL())
       })
-      .preload('permissions')
   }
 
   async show({ params }: HttpContextContract) {
@@ -29,7 +29,7 @@ export default class UsersController {
         .where('created_at', '>=', DateTime.now().minus({ days: 30 }).startOf('day').toSQL())
     })
     await user.load('permissions')
-    return user
+    return {id:user.id,username:user.username, email:user.email,created_at:user.createdAt, update_at:user.updatedAt}
   }
 
   async store({ request }: HttpContextContract) {
@@ -53,14 +53,10 @@ export default class UsersController {
         .htmlView('emails/welcome', { username })
     })
 
-    return { message: 'User has been created!', user }
+    return {succes:{ message: 'User has been created!', user }}
   }
 
   async update({ params, request, bouncer }: HttpContextContract) {
-
-
-
-
     const { id } = params
     await bouncer.authorize('updateUser', id)
     const { username: newUsername } = await request.validate(UpdateUserValidator)
@@ -69,7 +65,7 @@ export default class UsersController {
     user.username = newUsername
 
     await user.save()
-
+    return user;
   }
 
   async destroy({ params, bouncer }: HttpContextContract) {
@@ -78,5 +74,7 @@ export default class UsersController {
     const user = await User.findOrFail(id)
     await bouncer.authorize('deleteUser', id)
     await user.delete()
+
+    return { success: { message: 'User has been deleted!' } }
   }
 }
