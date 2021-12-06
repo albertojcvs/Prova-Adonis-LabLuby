@@ -1,10 +1,18 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Cart from 'App/Models/Cart'
 import Game from 'App/Models/Game'
 import SaveGameValidator from 'App/Validators/SaveGameValidator'
 
 export default class GamesController {
   public async index({}: HttpContextContract) {
-    return await Game.all()
+    const games = await Game.all()
+
+    const cart = await Cart.firstOrFail()
+
+    return {
+      'min-cart-value': cart.minValue,
+      'types': games,
+    }
   }
 
   public async store({ request }: HttpContextContract) {
