@@ -53,7 +53,7 @@ export default class UsersController {
         .htmlView('emails/welcome', { username })
     })
 
-    return {succes:{ message: 'User has been created!', user }}
+    return  user
   }
 
   async update({ params, request, bouncer }: HttpContextContract) {
@@ -65,7 +65,7 @@ export default class UsersController {
     user.username = newUsername
 
     await user.save()
-    return user;
+    return {id:user.id,username:user.username, email:user.email,created_at:user.createdAt, update_at:user.updatedAt}
   }
 
   async destroy({ params, bouncer }: HttpContextContract) {
