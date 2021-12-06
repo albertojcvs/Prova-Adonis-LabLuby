@@ -28,8 +28,8 @@ export const { actions } = Bouncer.define(
   'deleteBet',
   (user: User, bet: Bet) => bet.user_id === user.id
 )
-  .define('updateUser', (user: User, user_id: number) => user_id === user.id)
-  .define('deleteUser', (user: User, user_id: number) => user.id === user_id)
+  .define('updateUser', (user: User, user_id: number) => user.id == user_id)
+  .define('deleteUser', (user: User, user_id: number) => user.id == user_id)
 /*
 |--------------------------------------------------------------------------
 | Bouncer Policies

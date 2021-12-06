@@ -5,7 +5,7 @@ import { DateTime } from 'luxon'
 
 export default class SendEmailToUsersWhoDontMakeBet extends BaseTask {
   public static get schedule() {
-    return '0 0 9 * * *'
+    return '1 * * * * *'
   }
   public static get useLock() {
     return false
@@ -15,7 +15,6 @@ export default class SendEmailToUsersWhoDontMakeBet extends BaseTask {
     const usersAndLastBet = await User.query().preload('bets', (betsQuery) => {
       betsQuery.orderBy('created_at', 'desc').limit(1)
     })
-    console.log('entrou 1')
 
     for (const user of usersAndLastBet) {
       const lastBet = user.bets[0]
@@ -26,7 +25,6 @@ export default class SendEmailToUsersWhoDontMakeBet extends BaseTask {
             lastBet.createdAt.startOf('day').toSeconds() >=
           prazoEmSegundos
         ) {
-          console.log('entrou 2')
           await Mail.sendLater((message) => {
             message
               .from('albertojcvs@gmail.com')
@@ -36,7 +34,6 @@ export default class SendEmailToUsersWhoDontMakeBet extends BaseTask {
           })
         }
       } else {
-        console.log('entrou 3')
         await Mail.sendLater((message) => {
           message
             .from('albertojcvs@gmail.com')

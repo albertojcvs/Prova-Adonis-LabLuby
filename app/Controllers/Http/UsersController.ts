@@ -57,6 +57,10 @@ export default class UsersController {
   }
 
   async update({ params, request, bouncer }: HttpContextContract) {
+
+
+
+
     const { id } = params
     await bouncer.authorize('updateUser', id)
     const { username: newUsername } = await request.validate(UpdateUserValidator)
@@ -65,6 +69,7 @@ export default class UsersController {
     user.username = newUsername
 
     await user.save()
+
   }
 
   async destroy({ params, bouncer }: HttpContextContract) {
