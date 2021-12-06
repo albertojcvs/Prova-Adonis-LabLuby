@@ -18,16 +18,16 @@ export default class ExceptionHandler extends HttpExceptionHandler {
 
     if (error.code === 'E_ROW_NOT_FOUND') {
       return ctx.response
-        .status(409)
-        .send(`Error when try to find a ${rota.substr(0, rota.length - 1)} with this id in database`)
+        .status(404)
+        .send({error:{message:`Error when try to find a ${rota.substr(0, rota.length - 1)} with this id in database`}})
     }
 
-    if (error.code === 'E_INVALID_AUTH_UID') {
-      return ctx.response.status(409).send('There is no user with this data!')
+    if (error.code === 'E_INVALID_AUTH_UID'|| error.code === 'E_INVALID_AUTH_PASSWORD' )  {
+      return ctx.response.status(401).send({error:{message:'The email or the password are not valid!'}})
     }
 
     if(error.code === 'E_AUTHORIZATION_FAILURE'){
-      return ctx.response.send('It is not possible change that not yours data')
+      return ctx.response.status(401).send({error:{message:'It is not possible change that not yours data'}})
     }
 
     return error.message
