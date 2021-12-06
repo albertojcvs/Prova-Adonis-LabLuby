@@ -54,7 +54,7 @@ export default class ResetPasswordController {
           .from('albertojcvs@gmail.com')
           .to(user.email)
           .subject('Your password was reseted')
-          .htmlView('emails/password_reseted', { username: user.email })
+          .htmlView('emails/password_reseted', { username: user.username })
       })
     } else {
       return 'The user does not have a token!'
