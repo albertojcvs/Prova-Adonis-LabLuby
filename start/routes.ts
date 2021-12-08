@@ -18,10 +18,9 @@ Route.group(() => {
     Route.post('/', 'GamesController.store')
     Route.put('/:id', 'GamesController.update')
     Route.delete('/:id', 'GamesController.destroy')
-  }).middleware('isAdmin')
+  }).middleware('auth:api').middleware('isAdmin')
 })
   .prefix('/games')
-  .middleware('auth:api')
 
 Route.group(() => {
   Route.post('/', 'BetsController.store')
@@ -66,10 +65,3 @@ Route.group(() => {
   Route.group(() => {
     Route.post('/', 'CartsController.store')
   }).prefix('/carts')
-
-
-  Route.get('/', () => {
-    return {
-      hello:'world'
-    }
-  })
