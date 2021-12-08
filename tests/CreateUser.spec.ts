@@ -45,7 +45,7 @@ test.group('Create a User', () => {
 
     const user1 = await User.findOrFail(id)
 
-    const { statusCode, error } = await supertest(BASE_URL).post('/users').send(data2)
+    const { statusCode } = await supertest(BASE_URL).post('/users').send(data2)
 
     assert.equal(statusCode, 422)
     await user1.delete()
@@ -74,6 +74,64 @@ test.group('Create a User', () => {
 
     assert.equal(statusCode, 422)
     await user1.delete()
+  })
+
+  test('it should not be able to create a user without a username', async (assert) => {
+    const email = 'albertojcvs@gmail.com'
+    const { statusCode } = await supertest(BASE_URL).post('/users').send({
+      email,
+      password: '123',
+      password_confiamtion: '123',
+    })
+
+    assert.equal(statusCode, 422)
+
+    const user = await User.findBy('email', email)
+
+    assert.notExists(user)
+  })
+
+  test('It should not be able to create a user without a email', async (assert) => {
+    const username =  'albertojcvs'
+    const { statusCode } = await supertest(BASE_URL).post('/users').send({
+      username,
+      password: '123',
+      password_confiamtion: '123',
+    })
+
+    assert.equal(statusCode, 422)
+
+    const user = await User.findBy('username', username)
+
+    assert.notExists(user)
+  })
+
+  test('It should not be able to create a user without a password', async (assert) => {
+    const email = 'albertojcvs@gmail.com'
+    const { statusCode } = await supertest(BASE_URL).post('/users').send({
+      username: 'albertojcvs',
+      email: email,
+    })
+    assert.equal(statusCode, 422)
+
+    const user = await User.findBy('email', email)
+
+    assert.notExists(user)
+  })
+
+
+  test('It should not be able to create a user without a password confirmation', async (assert) => {
+    const email = 'albertojcvs@gmail.com'
+    const { statusCode } = await supertest(BASE_URL).post('/users').send({
+      username: 'albertojcvs',
+      email: email,
+      password:'123'
+    })
+    assert.equal(statusCode, 422)
+
+    const user = await User.findBy('email', email)
+
+    assert.notExists(user)
   })
 
   test('It should hash the password after create a user', async (assert) => {
