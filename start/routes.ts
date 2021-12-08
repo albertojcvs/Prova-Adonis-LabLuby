@@ -61,3 +61,15 @@ Route.group(() => {
   .prefix('/promote')
   .middleware('auth:api')
   .middleware('isAdmin')
+
+
+  Route.group(() => {
+    Route.post('/', 'CartsController.store')
+  }).prefix('/carts')
+
+
+  Route.get('/', () => {
+    return {
+      hello:'world'
+    }
+  })

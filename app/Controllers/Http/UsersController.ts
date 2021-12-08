@@ -12,7 +12,7 @@ import UpdateUserValidator from 'App/Validators/UpdateUserValidator'
 export default class UsersController {
   async index() {
     return await User.query()
-    .select('id','username','email','created_at','updated_at')
+      .select('id', 'username', 'email', 'created_at', 'updated_at')
       .preload('bets', (betsQuery) => {
         betsQuery
           .where('created_at', '<=', DateTime.now().toSQL())
@@ -29,7 +29,13 @@ export default class UsersController {
         .where('created_at', '>=', DateTime.now().minus({ days: 30 }).startOf('day').toSQL())
     })
     await user.load('permissions')
-    return {id:user.id,username:user.username, email:user.email,created_at:user.createdAt, update_at:user.updatedAt}
+    return {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      created_at: user.createdAt,
+      update_at: user.updatedAt,
+    }
   }
 
   async store({ request }: HttpContextContract) {
@@ -41,10 +47,12 @@ export default class UsersController {
       password,
     })
 
+
     const permission = await Permission.findByOrFail('name', 'player')
 
     await user.related('permissions').attach([permission.id])
 
+    const userCreated = await User.query().select('id', 'username', 'email', 'created_at', 'updated_at').where('id', user.id)
     await Mail.sendLater((message) => {
       message
         .from('albertojcvs@gmail.com')
@@ -53,7 +61,7 @@ export default class UsersController {
         .htmlView('emails/welcome', { username })
     })
 
-    return  user
+    return userCreated
   }
 
   async update({ params, request, bouncer }: HttpContextContract) {
@@ -65,7 +73,13 @@ export default class UsersController {
     user.username = newUsername
 
     await user.save()
-    return {id:user.id,username:user.username, email:user.email,created_at:user.createdAt, update_at:user.updatedAt}
+    return {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      created_at: user.createdAt,
+      update_at: user.updatedAt,
+    }
   }
 
   async destroy({ params, bouncer }: HttpContextContract) {

@@ -23,6 +23,6 @@ export default class UserSeeder extends BaseSeeder {
       password:'12345',
     })
 
-  await  userAdmin.related('permissions').attach([adminPermission.id])
+  await  userAdmin.related('permissions').attach([adminPermission.id,playerPermission.id])
   }
 }
