@@ -22,7 +22,7 @@ test.group('Authenticate user', () => {
 
     assert.equal(statusCode, 200)
     assert.exists(token, userData)
-    assert.equal(userData[0].email, email)
+    assert.equal(userData.email, email)
     await user.delete()
   })
 
