@@ -34,11 +34,9 @@ export default class BetsController {
       sumOfBets += game.price
 
       if (bet.numbers.length > game.max_number) {
-        return response
-          .status(409)
-          .send({
-            error: { message: 'Some of the bets have more numbers than the  game max numbers!' },
-          })
+        return response.status(409).send({
+          error: { message: 'Some of the bets have more numbers than the  game max numbers!' },
+        })
       }
       const betHasNumbersGreaterThanGameRange = bet.numbers.some((number) => number > game.range)
       if (betHasNumbersGreaterThanGameRange) {
@@ -64,7 +62,9 @@ export default class BetsController {
     }
 
     if (sumOfBets < cart.minValue) {
-      return response.status(409).send({error:{message: `The minimun cart value must be ${cart.minValue}`}})
+      return response
+        .status(409)
+        .send({ error: { message: `The minimun cart value must be ${cart.minValue}` } })
     }
 
     const newBets = await Bet.createMany(
@@ -86,7 +86,75 @@ export default class BetsController {
         .subject('Your new bets!')
         .htmlView('emails/new_bets', { bets: betsToEmail, username: user.username })
     })
-    return  newBets
+    return newBets
+  }
+
+  public async storeWithoutPriceCheck({ request, response }: HttpContextContract) {
+    const { bets } = await request.validate(CreateBetValidator)
+
+    const betsToEmail: BetToMail[] = []
+
+    for (let bet of bets) {
+      const game = await Game.findOrFail(bet.game_id)
+
+      betsToEmail.push({ numbers: bet.numbers, game_name: game.type })
+      if (bet.numbers.length > game.max_number) {
+        return response.status(409).send({
+          error: { message: 'Some of the bets have more numbers than the  game max numbers!' },
+        })
+      }
+
+      if (bet.numbers.length < game.max_number) {
+        return response
+          .status(409)
+          .send({
+            error: { message: 'Some of the bets have less numbers than the game minimum!' },
+          })
+      }
+
+      const betHasNumbersGreaterThanGameRange = bet.numbers.some((number) => number > game.range)
+      if (betHasNumbersGreaterThanGameRange) {
+        return response
+          .status(409)
+          .send({ error: { message: 'Some of the bets have a numbers greather than game range!' } })
+      }
+
+      const betNumbersInString = bet.numbers.join(', ')
+
+      const betAlreadyExists = await Bet.query()
+        .select('*')
+        .where('user_id', `${bet.user_id}`)
+        .andWhere('game_id', `${bet.game_id}`)
+        .andWhere('numbers', betNumbersInString)
+        .first()
+
+      if (betAlreadyExists) {
+        return response
+          .status(409)
+          .send({ error: { message: 'Some of the bets already exits! ', bet } })
+      }
+    }
+
+    const newBets = await Bet.createMany(
+      bets.map((bet) => {
+        return {
+          ...bet,
+          numbers: bet.numbers.join(', '),
+        }
+      })
+    )
+    const user_id = bets[0].user_id
+
+    const user = await User.findOrFail(user_id)
+
+    await Mail.sendLater((message) => {
+      message
+        .from('albertojcvs@gmail.com')
+        .to(user.email)
+        .subject('Your new bets!')
+        .htmlView('emails/new_bets', { bets: betsToEmail, username: user.username })
+    })
+    return newBets
   }
 
   public async show({ params }: HttpContextContract) {

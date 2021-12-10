@@ -23,6 +23,8 @@ Route.group(() => {
   .prefix('/games')
 
 Route.group(() => {
+  Route.post('/teste', 'BetsController.storeWithoutPriceCheck')
+
   Route.post('/', 'BetsController.store')
   Route.get('/', 'BetsController.index')
   Route.get('/:id', 'BetsController.show')
