@@ -98,9 +98,6 @@ test.group('Update a game', () => {
     const token = await loginUser(user.email, password)
 
     let game = await Game.firstOrFail()
-    const previewType = game.type
-    const previewDescription = game.description
-
     const type = 'JogoAtualizado'
     const description = 'Nova descrição'
     const { statusCode } = await supertest(BASE_URL)
@@ -121,5 +118,28 @@ test.group('Update a game', () => {
 
     await user.delete()
   })
+  test('It should not be able to update a game that does not exist', async (assert) => {
+    const gamesLength = (await Game.all()).length
 
+    const { user, password } = await createUser(true)
+    const token = await loginUser(user.email, password)
+
+    const type = 'Timemania'
+    const { text, statusCode } = await supertest(BASE_URL)
+      .put(`/games/${gamesLength + 1}`)
+      .send({
+        type,
+        description:
+          'Escolha 10 números e 1 time do coração. Você ganha acertando 7, 6, 5, 4 ou 3 números ou acertando o time',
+        range: 80,
+        price: 3,
+        max_number: 10,
+        color: '#FBDB30',
+      })
+      .set({ authorization: `Bearer ${token}`, accpet: 'application/json' })
+
+      assert.equal(statusCode, 404)
+
+      assert.hasAnyKeys(JSON.parse(text),['error'])
+  })
 })
